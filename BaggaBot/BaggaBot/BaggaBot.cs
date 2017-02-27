@@ -13,6 +13,7 @@ namespace BaggaBot
     class BaggaBot
     {
         DiscordClient discord;
+        CommandService commands;
 
         public BaggaBot()
         {
@@ -22,24 +23,49 @@ namespace BaggaBot
                 x.LogHandler = Log;
             });
 
-            discord.UsingCommands(x => {
+            discord.UsingCommands(x =>
+            {
                 x.PrefixChar = '!';
                 x.AllowMentionPrefix = true;
             });
 
-            var commands = discord.GetService<CommandService>();
-            commands.CreateCommand("test")
-                .Do(async (e) =>
-                {
-                    await e.Channel.SendMessage("works");
-                });
-
-            discord.ExecuteAndWait(async () =>
-            {
-                string token = ConfigurationManager.AppSettings.Get("bot-token");
-                await discord.Connect(token, TokenType.Bot);
-            });
+            commands = discord.GetService<CommandService>();
         }
+
+        public void say(ulong channelId, string message)
+        {
+            if (discord != null && discord.State == ConnectionState.Connected)
+            {
+                var channel = discord.GetChannel(channelId);
+                channel.SendMessage(message);
+            }
+        }
+
+        public async Task<Message> GetLastMessageInChannel(ulong channelId)
+        {
+            if (discord != null && discord.State == ConnectionState.Connected)
+            {
+                var channel = discord.GetChannel(channelId);
+                await channel.DownloadMessages();
+                Console.WriteLine($"Downloaded messages for channel: {channel.Name}");
+
+                var messages = channel.Messages;
+
+                if (messages.Count() > 0)
+                {
+                    return messages.OrderBy(x => x.Timestamp).Last();
+                }
+            }
+            return null;
+        }
+
+        public void Start()
+        {
+            string token = ConfigurationManager.AppSettings.Get("bot-token");
+            discord.Connect(token, TokenType.Bot);
+        }
+
+
 
         private void Log(object sender, LogMessageEventArgs e)
         {
