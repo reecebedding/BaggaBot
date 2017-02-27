@@ -9,7 +9,10 @@ namespace BaggaBot
              new ConfigurationProperty("DisplayMessage", typeof(ChannelCollection), null, ConfigurationPropertyOptions.IsRequired);
 
         private static readonly ConfigurationProperty intervalAttribute =
-             new ConfigurationProperty("Interval", typeof(ChannelCollection), null, ConfigurationPropertyOptions.IsRequired);
+             new ConfigurationProperty("IntervalSeconds", typeof(ChannelCollection), null, ConfigurationPropertyOptions.IsRequired);
+
+        private static readonly ConfigurationProperty inactivityPeriod =
+            new ConfigurationProperty("InactivityPeriodMinutes", typeof(ChannelCollection), null, ConfigurationPropertyOptions.IsRequired);
 
         private static readonly ConfigurationProperty channelsElement =
              new ConfigurationProperty("Channels", typeof(ChannelCollection), null, ConfigurationPropertyOptions.IsRequired);
@@ -18,12 +21,19 @@ namespace BaggaBot
         {
             base.Properties.Add(channelsElement);
             base.Properties.Add(displayMessageAttribute);
+            base.Properties.Add(inactivityPeriod);
         }
 
-        [ConfigurationProperty("Interval", IsRequired = true)]
+        [ConfigurationProperty("IntervalSeconds", IsRequired = true)]
         public UInt32 Interval
         {
             get { return (UInt32)this[intervalAttribute]; }
+        }
+
+        [ConfigurationProperty("InactivityPeriodMinutes", IsRequired = true)]
+        public UInt32 InactivityPeriod
+        {
+            get { return (UInt32)this[inactivityPeriod]; }
         }
 
         [ConfigurationProperty("DisplayMessage", IsRequired = true)]

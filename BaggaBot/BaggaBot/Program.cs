@@ -9,14 +9,14 @@ namespace BaggaBot
 {
     class Program
     {
-        private static InactivityConfiguration configuration = (InactivityConfiguration)ConfigurationManager.GetSection("InactivityTimerSection");
+        private static InactivityConfiguration inactivityConfiguration = (InactivityConfiguration)ConfigurationManager.GetSection("InactivityTimerSection");
 
         static void Main(string[] args)
         {
             BaggaBot bot = new BaggaBot();
             
             System.Timers.Timer aTimer = new System.Timers.Timer();
-            aTimer.Interval = 1000 * configuration.Interval;
+            aTimer.Interval = 1000 * inactivityConfiguration.Interval;
             aTimer.Elapsed += delegate { ReminderEvent(bot); };
             aTimer.Enabled = true;
 
@@ -27,15 +27,15 @@ namespace BaggaBot
 
         private static async void ReminderEvent(BaggaBot bot)
         {
-            foreach (ChannelElement channel in configuration.Channels)
+            foreach (ChannelElement channel in inactivityConfiguration.Channels)
             {   
                 var lastMessage = await bot.GetLastMessageInChannel(channel.Id);
 
                 if (lastMessage != null)
                 {
-                    if ((DateTime.Now - lastMessage.Timestamp).TotalHours > 1)
+                    if ((DateTime.Now - lastMessage.Timestamp).TotalMinutes > inactivityConfiguration.InactivityPeriod)
                     {
-                        bot.say(channel.Id, configuration.DisplayMessage);
+                        bot.say(channel.Id, inactivityConfiguration.DisplayMessage);
                     }
                 }
             }
