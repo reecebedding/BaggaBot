@@ -3,38 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace BaggaBot
 {
     class Program
     {
-        private static List<KeyValuePair<string, ulong>> channels = new List<KeyValuePair<string, ulong>>()
-        {
-            new KeyValuePair<string, ulong>("channel_name", 123456789012345678)
-        };
-           
+        private static InactivityConfiguration configuration = (InactivityConfiguration)ConfigurationManager.GetSection("InactivityTimerSection");
+
         static void Main(string[] args)
         {
             BaggaBot bot = new BaggaBot();
             
             System.Timers.Timer aTimer = new System.Timers.Timer();
-            aTimer.Interval = 1000 * 10;
+            aTimer.Interval = 1000 * configuration.Interval;
             aTimer.Elapsed += delegate { ReminderEvent(bot); };
             aTimer.Enabled = true;
 
             bot.Start();
+
+            Console.Read();
         }
 
         private static async void ReminderEvent(BaggaBot bot)
         {
-            ulong channelId = channels.Find(x => x.Key == "eye_bleach").Value;
-            var lastMessage = await bot.GetLastMessageInChannel(channelId);
-            
-            if (lastMessage != null)
-            {
-                if ((DateTime.Now - lastMessage.Timestamp).TotalHours > 24)
+            foreach (ChannelElement channel in configuration.Channels)
+            {   
+                var lastMessage = await bot.GetLastMessageInChannel(channel.Id);
+
+                if (lastMessage != null)
                 {
-                    bot.say(channelId, "@here Its been 24 hours since a post .. c'mon all!");
+                    if ((DateTime.Now - lastMessage.Timestamp).TotalHours > 1)
+                    {
+                        bot.say(channel.Id, configuration.DisplayMessage);
+                    }
                 }
             }
         }
