@@ -10,6 +10,7 @@ namespace BaggaBot
     {
         static void Main(string[] args)
         {
+            BaggaBot bot = new BaggaBot();
         }
     }
 }
