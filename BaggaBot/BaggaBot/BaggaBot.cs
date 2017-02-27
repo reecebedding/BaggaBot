@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 using Discord;
 using Discord.Commands;
@@ -35,7 +36,8 @@ namespace BaggaBot
 
             discord.ExecuteAndWait(async () =>
             {
-                await discord.Connect("", TokenType.Bot);
+                string token = ConfigurationManager.AppSettings.Get("bot-token");
+                await discord.Connect(token, TokenType.Bot);
             });
         }
 
