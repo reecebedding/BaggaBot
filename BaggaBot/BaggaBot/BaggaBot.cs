@@ -10,7 +10,7 @@ using Discord.Commands;
 
 namespace BaggaBot
 {
-    class BaggaBot
+    public class BaggaBot
     {
         DiscordClient discord;
         CommandService commands;
