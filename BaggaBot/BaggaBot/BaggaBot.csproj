@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaggaBot.cs" />
+    <Compile Include="BaggaBotCommands.cs" />
     <Compile Include="InactivityConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

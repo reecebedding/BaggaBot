@@ -30,6 +30,12 @@ namespace BaggaBot
             });
 
             commands = discord.GetService<CommandService>();
+            
+            commands.CreateCommand("baggabot help")
+                .Do(BaggaBotCommands.HelpCommand);
+
+            commands.CreateCommand("baggabot ping")
+                .Do(BaggaBotCommands.Ping);
         }
 
         public void say(ulong channelId, string message)
@@ -47,7 +53,6 @@ namespace BaggaBot
             {
                 var channel = discord.GetChannel(channelId);
                 await channel.DownloadMessages();
-                Console.WriteLine($"Downloaded messages for channel: {channel.Name}");
 
                 var messages = channel.Messages;
 
