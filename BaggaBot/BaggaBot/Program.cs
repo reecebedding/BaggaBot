@@ -28,16 +28,24 @@ namespace BaggaBot
         private static async void ReminderEvent(BaggaBot bot)
         {
             foreach (ChannelElement channel in inactivityConfiguration.Channels)
-            {   
-                var lastMessage = await bot.GetLastMessageInChannel(channel.Id);
-
-                if (lastMessage != null)
+            {
+                try
                 {
-                    if ((DateTime.Now - lastMessage.Timestamp).TotalMinutes > inactivityConfiguration.InactivityPeriod)
+                    var lastMessage = await bot.GetLastMessageInChannel(channel.Id);
+
+                    if (lastMessage != null)
                     {
-                        bot.say(channel.Id, inactivityConfiguration.DisplayMessage);
+                        if ((DateTime.Now - lastMessage.Timestamp).TotalMinutes > inactivityConfiguration.InactivityPeriod)
+                        {
+                            bot.say(channel.Id, inactivityConfiguration.DisplayMessage);
+                        }
                     }
                 }
+                catch (Exception exn)
+                {
+                    Console.WriteLine($"An exception was thrown: {exn.Message}");
+                }
+
             }
         }
 
